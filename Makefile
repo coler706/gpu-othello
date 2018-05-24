@@ -1,14 +1,14 @@
 CC              = /usr/bin/g++
 
-CUDA_PATH       = /usr/local/cuda
+CUDA_PATH       = /opt/cuda
 CUDA_INC_PATH   = $(CUDA_PATH)/include
 CUDA_BIN_PATH   = $(CUDA_PATH)/bin
-CUDA_LIB_PATH   = $(CUDA_PATH)/lib
+CUDA_LIB_PATH   = $(CUDA_PATH)/lib64
 
-NVCC		= $(CUDA_BIN_PATH)/nvcc
+NVCC		= nvcc
 
 # CUDA code generation flags
-GENCODE_FLAGS = -gencode arch=compute_30,code=sm_30 \
+GENCODE_FLAGS = -shared -Xcompiler -fPIC -gencode arch=compute_30,code=sm_30 \
 		-gencode arch=compute_35,code=sm_35 \
 		-gencode arch=compute_50,code=sm_50 \
 		-gencode arch=compute_52,code=sm_52 \
@@ -16,9 +16,9 @@ GENCODE_FLAGS = -gencode arch=compute_30,code=sm_30 \
 		-gencode arch=compute_61,code=sm_61 \
 
 CUDA_LIB_PATH := $(CUDA_LIB_PATH)
-LDFLAGS       = -L$(CUDA_LIB_PATH) -lcudart -lcuda -lcufft -lcurand
-CCFLAGS       = -std=c++11 -m64 -Wall -pedantic -O3
-NVCCFLAGS     = --std=c++11 -x cu -m64 -lcudart -lcuda -lcufft -lcurand -O3 -dc -D_FORCE_INLINES
+LDFLAGS       = -lm -lpthread -L$(CUDA_LIB_PATH) -lcudart -lcuda -lcufft -lcurand
+CCFLAGS       = -std=c++11 -m64 -Wall -pedantic -O3 -fPIC
+NVCCFLAGS     = -shared -Xcompiler -fPIC --std=c++11 -x cu -m64 -lcudart -lcuda -lcufft -lcurand -O3 -dc -D_FORCE_INLINES
 
 OBJS        = board.o simulate.o gametree.o player.o gpu_utilities.o
 PLAYERNAME  = gpu-othello
